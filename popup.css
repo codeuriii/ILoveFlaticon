@@ -1,0 +1,31 @@
+
+h1 {
+    width: 200px;
+    text-align: center;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    border: none;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 20px;
+    background-color: lightgrey;
+    color: black;
+    transition: .2s;
+}
+
+button:hover {
+    cursor: pointer;
+    color: white;
+    background-color: grey;
+}
+
+p {
+    text-align: right;
+    color: navy;
+}

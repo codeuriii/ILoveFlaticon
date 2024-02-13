@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "I love Flaticon!",
+    "version": "3.2",
+    "description": "Single File : l'icone au premier plan, Multi File : l'ensemble des icones du pack",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "tabs",
+        "scripting",
+        "downloads"
+    ],
+    "host_permissions": ["<all_urls>"],
+    "action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "icons": {
+        "48": "icon.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://www.flaticon.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
+  
