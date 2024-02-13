@@ -37,25 +37,24 @@ document.addEventListener('DOMContentLoaded', function() {
         multibouton.style.transform = "scale(0.9)"
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             activeTab = tabs[0];
-            if (!activeTab) {
-                chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-                    activeTab = tabs[0]
-                })
+            if (activeTab === undefined) {
+                multibouton.click()
+            } else {
+                url = activeTab.url
+                setTimeout(() => {
+                    multibouton.style.transform = "scale(1)"
+                    if (!url.includes("flaticon")) {
+                        const temp = multibouton.style.backgroundColor
+                        multibouton.style.backgroundColor = "red"
+                        setTimeout(() => {
+                            multibouton.style.backgroundColor = temp
+                        }, 200);
+                    } else {
+                        multiFile()
+                    }
+                }, 200);
             }
         });
-        url = activeTab.url
-        setTimeout(() => {
-            multibouton.style.transform = "scale(1)"
-            if (!url.includes("flaticon")) {
-                const temp = multibouton.style.backgroundColor
-                multibouton.style.backgroundColor = "red"
-                setTimeout(() => {
-                    multibouton.style.backgroundColor = temp
-                }, 200);
-            } else {
-                multiFile()
-            }
-        }, 200);
     });
 });
 
