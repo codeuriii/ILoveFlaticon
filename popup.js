@@ -59,24 +59,43 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             multiCopyPackLink.style.transform = "scale(1)"
 
-            if (verifFlaticon()) {
-                chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-                    const activeTab = tabs[0];
-            
-                    chrome.scripting.executeScript({
-                        target: { tabId: activeTab.id },
-                        function: () => {
-                            navigator.clipboard.writeText(location.href)
-                        }
-                    });
-                });
-            } else {
-                const temp = multiCopyPackLink.style.backgroundColor
-                multiCopyPackLink.style.backgroundColor = "red"
-                setTimeout(() => {
-                    multiCopyPackLink.style.backgroundColor = temp
-                }, 200);
-            }
+            verifFlaticon().then(data => {
+                if (data) {
+                    new Promise((resolve, reject) => {
+                        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                            if (chrome.runtime.lastError) {
+                                return reject(chrome.runtime.lastError);
+                            }
+                        
+                            const activeTab = tabs[0];
+                        
+                            chrome.scripting.executeScript(
+                                {
+                                    target: { tabId: activeTab.id },
+                                    func: () => {
+                                        return location.href;
+                                    }
+                                },
+                                (results) => {
+                                    if (chrome.runtime.lastError) {
+                                        return reject(chrome.runtime.lastError);
+                                    }
+                                    const [result] = results;
+                                    resolve(result.result);
+                                }
+                            );
+                        });
+                    }).then(data => {
+                        navigator.clipboard.writeText(data)
+                    })
+                } else {
+                    const temp = multiCopyPackLink.style.backgroundColor
+                    multiCopyPackLink.style.backgroundColor = "red"
+                    setTimeout(() => {
+                        multiCopyPackLink.style.backgroundColor = temp
+                    }, 200);
+                }
+            })
         }, 200);
     })
     
