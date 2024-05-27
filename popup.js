@@ -99,6 +99,122 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 200);
     })
     
+
+    const copyAllImgsLink = document.getElementById("copy-all-imgs-link")
+    copyAllImgsLink.addEventListener("click", () => {
+        copyAllImgsLink.style.transform = "scale(0.9)"
+
+        setTimeout(() => {
+            copyAllImgsLink.style.transform = "scale(1)"
+            verifFlaticon().then(data => {
+                if (data) {
+                    new Promise((resolve, reject) => {
+                        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                            if (chrome.runtime.lastError) {
+                                return reject(chrome.runtime.lastError);
+                            }
+                        
+                            const activeTab = tabs[0];
+                        
+                            chrome.scripting.executeScript(
+                                {
+                                    target: { tabId: activeTab.id },
+                                    func: () => {
+                                        var images = document.getElementsByClassName("lazyload--done")
+                                        var filtereds = []
+
+                                        for (const image of images) {
+                                            filtereds.push(image.getAttribute('src'))
+                                        }
+
+                                        return JSON.stringify(filtereds)
+                                    }
+                                },
+                                (results) => {
+                                    if (chrome.runtime.lastError) {
+                                        return reject(chrome.runtime.lastError);
+                                    }
+                            
+                                    const [result] = results;
+                                    resolve(result.result);
+                                }
+                            );
+                        });
+                    }).then(data => {
+                        const filtereds = JSON.parse(data)
+                        var result = ""
+                        for (const src of filtereds) {
+                            result += `${src}\n`
+                        }
+                        navigator.clipboard.writeText(result)
+                    })
+                } else {
+                    const temp = copyAllImgsLink.style.backgroundColor
+                    copyAllImgsLink.style.backgroundColor = "red"
+                    setTimeout(() => {
+                        copyAllImgsLink.style.backgroundColor = temp
+                    }, 200);
+                }
+            })
+        }, 200);
+    })
+
+    const copyAllImgsJson = document.getElementById("copy-json-link")
+    copyAllImgsJson.addEventListener("click", () => {
+        copyAllImgsJson.style.transform = "scale(0.9)"
+
+        setTimeout(() => {
+            copyAllImgsJson.style.transform = "scale(1)"
+            verifFlaticon().then(data => {
+                if (data) {
+                    new Promise((resolve, reject) => {
+                        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                            if (chrome.runtime.lastError) {
+                                return reject(chrome.runtime.lastError);
+                            }
+                        
+                            const activeTab = tabs[0];
+                        
+                            chrome.scripting.executeScript(
+                                {
+                                    target: { tabId: activeTab.id },
+                                    func: () => {
+                                        var images = document.getElementsByClassName("lazyload--done")
+                                        var filtereds = []
+
+                                        for (const image of images) {
+                                            filtereds.push(image.getAttribute('src'))
+                                        }
+
+                                        return JSON.stringify(filtereds)
+                                    }
+                                },
+                                (results) => {
+                                    if (chrome.runtime.lastError) {
+                                        return reject(chrome.runtime.lastError);
+                                    }
+                            
+                                    const [result] = results;
+                                    resolve(result.result);
+                                }
+                            );
+                        });
+                    }).then(data => {
+                        const filtereds = JSON.parse(data)
+                        const result = JSON.stringify(filtereds, null, 4)
+                        navigator.clipboard.writeText(result)
+                    })
+                } else {
+                    const temp = copyAllImgsJson.style.backgroundColor
+                    copyAllImgsJson.style.backgroundColor = "red"
+                    setTimeout(() => {
+                        copyAllImgsJson.style.backgroundColor = temp
+                    }, 200);
+                }
+            })
+        }, 200);
+    })
+
     var singlebouton = document.getElementById('single-file-download');
     // verif si on est sur flaticon.com
     
