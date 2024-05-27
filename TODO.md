@@ -1,0 +1,2 @@
+- Set color btns on green
+- Generate a zip ? -> pack
