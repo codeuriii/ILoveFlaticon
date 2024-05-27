@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             multibouton.style.backgroundColor = temp
                         }, 200);
                     } else {
-                        multiFile()
+                        tempMultiFile()
                         const temp = multibouton.style.backgroundColor
                         multibouton.style.backgroundColor = "green"
                         setTimeout(() => {
@@ -322,6 +322,46 @@ function singleFile() {
                 name = cleanFileName(name)
                 console.log(name)
                 chrome.runtime.sendMessage({ action: 'downloadImage', imageUrl: src, saveas: true, name: name });
+            }
+        });
+    
+    });
+}
+
+function tempMultiFile() {
+
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        const activeTab = tabs[0];
+
+        chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            function: async() => {
+                var images = document.getElementsByClassName("lazyload--done")
+                var srcs = []
+                var names = []
+
+                for (const img of images) {
+                    srcs.push(img.getAttribute("src"))
+                    names.push(img.getAttribute("title"))
+                }
+
+                const zip = new JSZip();
+
+                const fetchImage = async (url, name) => {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    zip.file(name, blob);
+                };
+
+                const downloadZip = async () => {
+                    await Promise.all(urls.map((url, index) => fetchImage(url, names[index])));
+
+                    zip.generateAsync({ type: 'blob' }).then((content) => {
+                        saveAs(content, 'images.zip');
+                    });
+                };
+
+                downloadZip();
             }
         });
     
