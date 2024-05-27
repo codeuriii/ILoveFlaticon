@@ -306,10 +306,20 @@ function singleFile() {
         chrome.scripting.executeScript({
             target: { tabId: activeTab.id },
             function: () => {
+                function cleanFileName(str) {
+                    // Liste des caractères interdits dans un nom de fichier
+                    const forbiddenChars = /[\/\?<>\\:\*\| "]/g;
+                    // Remplacer les caractères interdits par un tiret bas
+                    let cleanedStr = str.replace(forbiddenChars, '');
+                    // Retirer les espaces en début et fin de chaîne
+                    cleanedStr = cleanedStr.trim();
+                    return cleanedStr;
+                }
                 console.log("hello world")
                 var src = document.querySelector("#detail > div > div.row.detail__top.mg-none > section > div > div > div.row.row--vertical-center.mg-none.full-height.detail__icon__inner > div > div > img").getAttribute("src")
                 console.log(src)
-                var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2-i > h1").textContent.replace(" free icon", "") + ".png"
+                var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2 > h1").textContent.replace(" free icon", "") + ".png"
+                name = cleanFileName(name)
                 console.log(name)
                 chrome.runtime.sendMessage({ action: 'downloadImage', imageUrl: src, saveas: true, name: name });
             }
