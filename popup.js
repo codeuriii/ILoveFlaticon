@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let url = ""
     console.log("ok")
     
-    var singlebouton = document.getElementById('single-file');
+    var singlebouton = document.getElementById('single-file-download');
     // verif si on est sur flaticon.com
     
     singlebouton.addEventListener('click', function() {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
-    var multibouton = document.getElementById('multi-file')
+    var multibouton = document.getElementById('multi-file-download')
     multibouton.addEventListener('click', function() {
         multibouton.style.transform = "scale(0.9)"
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
