@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "I love Flaticon!",
-    "version": "4.1",
+    "version": "4.2",
     "description": "Single File : l'icone au premier plan - Multi File : l'ensemble des icones du pack",
     "permissions": [
         "storage",
