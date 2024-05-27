@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 url = activeTab.url
                 setTimeout(() => {
                     singlebouton.style.transform = "scale(1)"
-                    if (!url.includes("flaticon")) {
+                    if (!url.includes("flaticon.com")) {
                         const temp = singlebouton.style.backgroundColor
                         singlebouton.style.backgroundColor = "red"
                         setTimeout(() => {
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 url = activeTab.url
                 setTimeout(() => {
                     multibouton.style.transform = "scale(1)"
-                    if (!url.includes("flaticon")) {
+                    if (!url.includes("flaticon.com")) {
                         const temp = multibouton.style.backgroundColor
                         multibouton.style.backgroundColor = "red"
                         setTimeout(() => {
