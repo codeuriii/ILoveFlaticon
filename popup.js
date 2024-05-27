@@ -40,6 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }).then(data => {
                         navigator.clipboard.writeText(data)
+                        const temp = copySingleFile.style.backgroundColor
+                        copySingleFile.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            copySingleFile.style.backgroundColor = temp
+                        }, 200);
                     })
                 } else {
                     const temp = copySingleFile.style.backgroundColor
@@ -87,6 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }).then(data => {
                         navigator.clipboard.writeText(data)
+                        const temp = multiCopyPackLink.style.backgroundColor
+                        multiCopyPackLink.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            multiCopyPackLink.style.backgroundColor = temp
+                        }, 200);
                     })
                 } else {
                     const temp = multiCopyPackLink.style.backgroundColor
@@ -147,6 +157,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             result += `${src}\n`
                         }
                         navigator.clipboard.writeText(result)
+                        const temp = copyAllImgsLink.style.backgroundColor
+                        copyAllImgsLink.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            copyAllImgsLink.style.backgroundColor = temp
+                        }, 200);
                     })
                 } else {
                     const temp = copyAllImgsLink.style.backgroundColor
@@ -203,6 +218,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         const filtereds = JSON.parse(data)
                         const result = JSON.stringify(filtereds, null, 4)
                         navigator.clipboard.writeText(result)
+                        const temp = copyAllImgsJson.style.backgroundColor
+                        copyAllImgsJson.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            copyAllImgsJson.style.backgroundColor = temp
+                        }, 200);
                     })
                 } else {
                     const temp = copyAllImgsJson.style.backgroundColor
@@ -236,6 +256,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         }, 200);
                     } else {
                         singleFile()
+                        const temp = singlebouton.style.backgroundColor
+                        singlebouton.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            singlebouton.style.backgroundColor = temp
+                        }, 200);
                     }
                 }, 200);
             }
@@ -262,6 +287,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         }, 200);
                     } else {
                         multiFile()
+                        const temp = multibouton.style.backgroundColor
+                        multibouton.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            multibouton.style.backgroundColor = temp
+                        }, 200);
                     }
                 }, 200);
             }
