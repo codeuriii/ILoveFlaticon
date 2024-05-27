@@ -10,27 +10,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setTimeout(() => {
             copySingleFile.style.transform = "scale(1)"
-
-            if (verifFlaticon()) {
-                chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-                    const activeTab = tabs[0];
-            
-                    chrome.scripting.executeScript({
-                        target: { tabId: activeTab.id },
-                        function: () => {
-                            var src = document.querySelector("#detail > div > div.row.detail__top.mg-none > section > div > div > div.row.row--vertical-center.mg-none.full-height.detail__icon__inner > div > div > img").getAttribute("src")
-                            console.log(src)
-                            navigator.clipboard.writeText(src)
-                        }
-                    });
-                });
-            } else {
-                const temp = copySingleFile.style.backgroundColor
-                copySingleFile.style.backgroundColor = "red"
-                setTimeout(() => {
-                    copySingleFile.style.backgroundColor = temp
-                }, 200);
-            }
+            verifFlaticon().then(data => {
+                if (data) {
+                    new Promise((resolve, reject) => {
+                        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                            if (chrome.runtime.lastError) {
+                                return reject(chrome.runtime.lastError);
+                            }
+                        
+                            const activeTab = tabs[0];
+                        
+                            chrome.scripting.executeScript(
+                                {
+                                    target: { tabId: activeTab.id },
+                                    func: () => {
+                                        const imgElement = document.querySelector("#detail > div > div.row.detail__top.mg-none > section > div > div > div.row.row--vertical-center.mg-none.full-height.detail__icon__inner > div > div > img");
+                                        return imgElement ? imgElement.getAttribute("src") : null;
+                                    }
+                                },
+                                (results) => {
+                                    if (chrome.runtime.lastError) {
+                                        return reject(chrome.runtime.lastError);
+                                    }
+                            
+                                    const [result] = results;
+                                    resolve(result.result);
+                                }
+                            );
+                        });
+                    }).then(data => {
+                        navigator.clipboard.writeText(data)
+                    })
+                } else {
+                    const temp = copySingleFile.style.backgroundColor
+                    copySingleFile.style.backgroundColor = "red"
+                    setTimeout(() => {
+                        copySingleFile.style.backgroundColor = temp
+                    }, 200);
+                }
+            })
         }, 200);
     })
 
@@ -164,9 +182,16 @@ function multiFile() {
 }
 
 function verifFlaticon() {
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        activeTab = tabs[0];
-        url = activeTab.url
-        return url.includes("flaticon.com")
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        if (chrome.runtime.lastError) {
+          return reject(chrome.runtime.lastError);
+        }
+  
+        const activeTab = tabs[0];
+        const url = activeTab.url;
+        const isFlaticon = url.includes("flaticon.com");
+        resolve(isFlaticon);
+      });
     });
-}
+  }
