@@ -3,6 +3,64 @@ document.addEventListener('DOMContentLoaded', function() {
     let activeTab
     let url = ""
     console.log("ok")
+
+    const copySingleFile = document.getElementById("single-file-copy")
+    copySingleFile.addEventListener("click", () => {
+        copySingleFile.style.transform = "scale(0.9)"
+
+        setTimeout(() => {
+            copySingleFile.style.transform = "scale(1)"
+
+            if (verifFlaticon()) {
+                chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                    const activeTab = tabs[0];
+            
+                    chrome.scripting.executeScript({
+                        target: { tabId: activeTab.id },
+                        function: () => {
+                            var src = document.querySelector("#detail > div > div.row.detail__top.mg-none > section > div > div > div.row.row--vertical-center.mg-none.full-height.detail__icon__inner > div > div > img").getAttribute("src")
+                            console.log(src)
+                            navigator.clipboard.writeText(src)
+                        }
+                    });
+                });
+            } else {
+                const temp = copySingleFile.style.backgroundColor
+                copySingleFile.style.backgroundColor = "red"
+                setTimeout(() => {
+                    copySingleFile.style.backgroundColor = temp
+                }, 200);
+            }
+        }, 200);
+    })
+
+    const multiCopyPackLink = document.getElementById("copy-pack-link")
+    multiCopyPackLink.addEventListener("click", () => {
+        multiCopyPackLink.style.transform = "scale(0.9)"
+
+        setTimeout(() => {
+            multiCopyPackLink.style.transform = "scale(1)"
+
+            if (verifFlaticon()) {
+                chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                    const activeTab = tabs[0];
+            
+                    chrome.scripting.executeScript({
+                        target: { tabId: activeTab.id },
+                        function: () => {
+                            navigator.clipboard.writeText(location.href)
+                        }
+                    });
+                });
+            } else {
+                const temp = multiCopyPackLink.style.backgroundColor
+                multiCopyPackLink.style.backgroundColor = "red"
+                setTimeout(() => {
+                    multiCopyPackLink.style.backgroundColor = temp
+                }, 200);
+            }
+        }, 200);
+    })
     
     var singlebouton = document.getElementById('single-file-download');
     // verif si on est sur flaticon.com
@@ -102,5 +160,13 @@ function multiFile() {
             }
         });
     
+    });
+}
+
+function verifFlaticon() {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        activeTab = tabs[0];
+        url = activeTab.url
+        return url.includes("flaticon.com")
     });
 }
