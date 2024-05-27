@@ -7,12 +7,14 @@ h1 {
 .container {
     display: flex;
     flex-direction: column;
+    text-align: center;
+    font-size: large;
 }
 
 button {
     border: none;
     padding: 10px;
-    margin: 10px;
+    margin: 5px;
     border-radius: 20px;
     background-color: lightgrey;
     color: black;
