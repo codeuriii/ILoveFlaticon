@@ -130,7 +130,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 {
                                     target: { tabId: activeTab.id },
                                     func: () => {
-                                        var images = document.getElementsByClassName("lazyload--done")
+                                        var allAs = document.getElementsByClassName("link-icon-detail")
+                                        var images = []
+                                        for (const a of allAs) {
+                                            images.push(a.querySelector("img"))
+                                        }
                                         var filtereds = []
 
                                         for (const image of images) {
@@ -154,7 +158,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const filtereds = JSON.parse(data)
                         var result = ""
                         for (const src of filtereds) {
-                            result += `${src}\n`
+                            result += `${src}
+`
                         }
                         navigator.clipboard.writeText(result)
                         const temp = copyAllImgsLink.style.backgroundColor
@@ -194,7 +199,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 {
                                     target: { tabId: activeTab.id },
                                     func: () => {
-                                        var images = document.getElementsByClassName("lazyload--done")
+                                        var allAs = document.getElementsByClassName("link-icon-detail")
+                                        var images = []
+                                        for (const a of allAs) {
+                                            images.push(a.querySelector("img"))
+                                        }
                                         var filtereds = []
 
                                         for (const image of images) {
