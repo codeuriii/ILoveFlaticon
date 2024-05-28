@@ -391,7 +391,6 @@ function multiFile() {
                     saveas: true,
                     name: `${title}.zip`
                 })
-                console.log("apres le runtime")
             });
         };
 
