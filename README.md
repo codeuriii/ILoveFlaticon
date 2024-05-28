@@ -24,4 +24,4 @@ CodeurIII
 
 # Disclamer
 
-**I'm not affiliated with Flaticon**
+**I'm not affiliated with Flaticon !**
