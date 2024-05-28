@@ -1,6 +1,6 @@
 # ILoveFlaticon
 
-ILoveFlaticon is an extension to download any icon on [flaticon site](https://flaticon.com)
+ILoveFlaticon is an extension to download any icon on [flaticon](https://flaticon.com)
 
 ## Installation
 
