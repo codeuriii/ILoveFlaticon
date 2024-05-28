@@ -1,6 +1,5 @@
 
 - Generate a zip ? -> pack
 
-- Fix multi
-    - download
-    - copy
+- Download to a zip
+    -> set name to pack name
