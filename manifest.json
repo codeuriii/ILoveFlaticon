@@ -20,16 +20,6 @@
     },
     "icons": {
         "48": "icon.png"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "*://www.flaticon.com/*"
-            ],
-            "js": [
-                "content.js"
-            ]
-        }
-    ]
+    }
 }
   
