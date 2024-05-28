@@ -330,7 +330,7 @@ function singleFile() {
                 if (location.href.includes("origin=pack")) {
                     var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2-i > h1").textContent.replace(" free icon", "") + ".png"
                 } else {
-                var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2 > h1").textContent.replace(" free icon", "") + ".png"
+                    var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2 > h1").textContent.replace(" free icon", "") + ".png"
                 }
                 name = cleanFileName(name)
                 console.log(name)
