@@ -1,5 +1,4 @@
 
-- Generate a zip ? -> pack
+- Update readme
 
-- Download to a zip
-    -> set name to pack name
+- Fix copy links multi

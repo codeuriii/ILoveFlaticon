@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             multibouton.style.backgroundColor = temp
                         }, 200);
                     } else {
-                        tempMultiFile()
+                        multiFile()
                         const temp = multibouton.style.backgroundColor
                         multibouton.style.backgroundColor = "green"
                         setTimeout(() => {
@@ -328,72 +328,75 @@ function singleFile() {
     });
 }
 
-function tempMultiFile() {
-
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        const activeTab = tabs[0];
-
-        chrome.scripting.executeScript({
-            target: { tabId: activeTab.id },
-            function: async() => {
-                var images = document.getElementsByClassName("lazyload--done")
-                var srcs = []
-                var names = []
-
-                for (const img of images) {
-                    srcs.push(img.getAttribute("src"))
-                    names.push(img.getAttribute("title"))
-                }
-
-                const zip = new JSZip();
-
-                const fetchImage = async (url, name) => {
-                    const response = await fetch(url);
-                    const blob = await response.blob();
-                    zip.file(name, blob);
-                };
-
-                const downloadZip = async () => {
-                    await Promise.all(urls.map((url, index) => fetchImage(url, names[index])));
-
-                    zip.generateAsync({ type: 'blob' }).then((content) => {
-                        saveAs(content, 'images.zip');
-                    });
-                };
-
-                downloadZip();
-            }
-        });
-    
-    });
-}
-
 function multiFile() {
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        const activeTab = tabs[0];
 
-        chrome.scripting.executeScript({
-            target: { tabId: activeTab.id },
-            function: async() => {
-                var images = document.getElementsByClassName("lazyload--done")
-                var filtereds = []
+    new Promise((resolve, reject) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            const activeTab = tabs[0];
 
-                for (const image of images) {
-                    filtereds.push(image)
+            chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                function: async() => {
+                    var allAs = document.getElementsByClassName("link-icon-detail")
+                    var images = []
+                    for (const a of allAs) {
+                        images.push(a.querySelector("img"))
+                    }
+                    
+                    var srcs = []
+                    var names = []
+
+                    for (const img of images) {
+                        srcs.push(img.getAttribute("src"))
+                        names.push(img.getAttribute("title").replace(" icon", ".png"))
+                    }
+
+                    const titleElement = document.querySelector("#pack-view__inner > section.pack-view__header > h1 > span.title")
+                    const title = titleElement.textContent.split(":")[1].trim()
+                    return JSON.stringify([srcs, names, title])
                 }
-
-                for (const image of filtereds) {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    var name = image.getAttribute("title")
-                    name = name.replace(" icon", "")
-                    name = name + ".png"
-                    chrome.runtime.sendMessage({ action: 'downloadImage', imageUrl: image.getAttribute("src"), saveas: false, name: name });
+            },
+            (results) => {
+                if (chrome.runtime.lastError) {
+                    return reject(chrome.runtime.lastError);
                 }
-                
-            }
-        });
-    
-    });
+        
+                const [result] = results;
+                resolve(result.result);
+            });
+        })
+    }).then(result => {
+
+        const data = JSON.parse(result)
+
+        const zip = new JSZip();
+        const urls = data[0]
+        const names = data[1]
+        const title = data[2]
+
+        const fetchImage = async (url, name) => {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            zip.file(name, blob);
+        };
+
+        const downloadZip = async () => {
+            await Promise.all(urls.map((url, index) => fetchImage(url, names[index])));
+
+            zip.generateAsync({ type: 'blob' }).then((content) => {
+                const blodUrl = URL.createObjectURL(content)
+                chrome.runtime.sendMessage({
+                    action: "downloadImage",
+                    imageUrl: blodUrl,
+                    saveas: true,
+                    name: `${title}.zip`
+                })
+                console.log("apres le runtime")
+            });
+        };
+
+        downloadZip();
+    })
 }
 
 function verifFlaticon() {
