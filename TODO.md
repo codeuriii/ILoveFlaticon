@@ -1,6 +1,6 @@
 
-- Download SVG
 - Download Base64
-
-- Copy svg
 - Copy Base64
+
+- Add dark theme
+    -> how to set persistant ?
