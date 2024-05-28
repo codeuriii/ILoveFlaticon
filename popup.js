@@ -404,7 +404,7 @@ function verifFlaticon() {
         if (chrome.runtime.lastError) {
             return reject(chrome.runtime.lastError);
         }
-  
+
         const activeTab = tabs[0];
         const url = activeTab.url;
         const isFlaticon = url.includes("flaticon.com");
