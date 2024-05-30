@@ -35,3 +35,7 @@ p {
 .multi-file-div {
     margin-top: 10px;
 }
+
+a {
+    display: none;
+}

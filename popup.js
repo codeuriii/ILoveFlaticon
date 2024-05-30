@@ -4,6 +4,132 @@ document.addEventListener('DOMContentLoaded', function() {
     let url = ""
     console.log("ok")
 
+    const downloadIco = document.getElementById("single-file-ico")
+    downloadIco.addEventListener("click", () => {
+        downloadIco.style.transform = "scale(0.9)"
+        setTimeout(() => {
+            downloadIco.style.transform = "scale(1)"
+            verifFlaticon().then(data => {
+                if (data) {
+                    new Promise((resolve, reject) => {
+                        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                            if (chrome.runtime.lastError) {
+                                return reject(chrome.runtime.lastError);
+                            }
+                            const activeTab = tabs[0];
+                            chrome.scripting.executeScript(
+                                {
+                                    target: { tabId: activeTab.id },
+                                    func: () => {
+                                        function cleanFileName(str) {
+                                            // Liste des caractères interdits dans un nom de fichier
+                                            const forbiddenChars = /[\/\?<>\\:\*\| "]/g;
+                                            // Remplacer les caractères interdits par un tiret bas
+                                            let cleanedStr = str.replace(forbiddenChars, '');
+                                            // Retirer les espaces en début et fin de chaîne
+                                            cleanedStr = cleanedStr.trim();
+                                            return cleanedStr;
+                                        }
+                                        console.log("hello world")
+                                        var src = document.querySelector("#detail > div > div.row.detail__top.mg-none > section > div > div > div.row.row--vertical-center.mg-none.full-height.detail__icon__inner > div > div > img").getAttribute("src")
+                                        console.log(src)
+                                        try {
+                                            var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2-i > h1").textContent.replace(" free icon", "") + ".png"
+                                        } catch (error) {
+                                            var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2 > h1").textContent.replace(" free icon", "") + ".png"
+                                        }
+                                        name = cleanFileName(name)
+                                        return [src.trim(), name]
+                                    }
+                                },
+                                (results) => {
+                                    if (chrome.runtime.lastError) {
+                                        return reject(chrome.runtime.lastError);
+                                    }
+                            
+                                    const [result] = results;
+                                    resolve(result.result);
+                                }
+                            );
+                        });
+                    }).then(async data => {
+                        async function convertPngToIco(pngUrl) {
+                            return new Promise((resolve, reject) => {
+                                const img = new Image();
+                                img.onload = function () {
+                                    const canvas = document.createElement('canvas');
+                                    const size = Math.max(img.width, img.height);
+                                    canvas.width = size;
+                                    canvas.height = size;
+                                    const ctx = canvas.getContext('2d');
+                                    ctx.drawImage(img, 0, 0, size, size);
+
+                                    canvas.toBlob(async function (blob) {
+                                        if (!blob) {
+                                            return reject(new Error("Failed to create PNG blob"));
+                                        }
+
+                                        const arrayBuffer = await blob.arrayBuffer();
+                                        const dataView = new DataView(new ArrayBuffer(22 + arrayBuffer.byteLength));
+
+                                        // ICONDIR
+                                        dataView.setUint16(0, 0, true);  // Reserved
+                                        dataView.setUint16(2, 1, true);  // Image type (1 = icon)
+                                        dataView.setUint16(4, 1, true);  // Number of images
+
+                                        // ICONDIRENTRY
+                                        dataView.setUint8(6, size);  // Width
+                                        dataView.setUint8(7, size);  // Height
+                                        dataView.setUint8(8, 0);     // Color palette
+                                        dataView.setUint8(9, 0);     // Reserved
+                                        dataView.setUint16(10, 1, true); // Color planes
+                                        dataView.setUint16(12, 32, true); // Bits per pixel
+                                        dataView.setUint32(14, arrayBuffer.byteLength, true); // Size of image data
+                                        dataView.setUint32(18, 22, true); // Offset of image data
+
+                                        // Image data
+                                        new Uint8Array(dataView.buffer).set(new Uint8Array(arrayBuffer), 22);
+
+                                        const icoBlob = new Blob([dataView], { type: 'image/x-icon' });
+                                        resolve(icoBlob);
+                                    });
+                                };
+                                img.onerror = function () {
+                                    reject(new Error("Failed to load image"));
+                                };
+                                img.src = pngUrl;
+                            });
+                        }
+
+                        console.log(data)
+                        
+                        const icoBlob = await convertPngToIco(data[0])
+
+                        const blodUrl = URL.createObjectURL(icoBlob)
+                        chrome.runtime.sendMessage({
+                            action: "downloadImage",
+                            imageUrl: blodUrl,
+                            saveas: true,
+                            name: data[1].replace(".png", ".ico")
+                        })
+
+                        const temp = downloadIco.style.backgroundColor
+                        downloadIco.style.backgroundColor = "green"
+                        setTimeout(() => {
+                            downloadIco.style.backgroundColor = temp
+                        }, 200);
+                    })
+                } else {
+                    const temp = downloadIco.style.backgroundColor
+                    downloadIco.style.backgroundColor = "red"
+                    setTimeout(() => {
+                        downloadIco.style.backgroundColor = temp
+                    }, 200);
+                }
+            })
+        }, 200);
+    })
+
     const copySingleFile = document.getElementById("single-file-copy")
     copySingleFile.addEventListener("click", () => {
         copySingleFile.style.transform = "scale(0.9)"
@@ -327,9 +453,9 @@ function singleFile() {
                 console.log("hello world")
                 var src = document.querySelector("#detail > div > div.row.detail__top.mg-none > section > div > div > div.row.row--vertical-center.mg-none.full-height.detail__icon__inner > div > div > img").getAttribute("src")
                 console.log(src)
-                if (location.href.includes("origin=pack")) {
+                try {
                     var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2-i > h1").textContent.replace(" free icon", "") + ".png"
-                } else {
+                } catch (error) {
                     var name = document.querySelector("#detail > div > div.row.detail__top.mg-none > aside > div.pd-top-lv3.pd-bottom-lv2 > h1").textContent.replace(" free icon", "") + ".png"
                 }
                 name = cleanFileName(name)
