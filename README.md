@@ -9,7 +9,8 @@ You can install it on [Edge web store](https://microsoftedge.microsoft.com/addon
 ## Features
 
 #### Icon features
-- Download an image
+- Download as a png
+- Download as a ico
 - Copy image source link
 
 #### Pack features
